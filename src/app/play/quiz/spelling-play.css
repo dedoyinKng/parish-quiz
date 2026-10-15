@@ -1,0 +1,30 @@
+.sb-wrap { width:100%; max-width:46rem; margin:0 auto; padding:1rem; box-sizing:border-box; }
+.sb-top { display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+.sb-title { font-weight:700; font-size:1.05rem; }
+.sb-who { font-size:.85rem; color:#6b7280; }
+.sb-timer { font-variant-numeric:tabular-nums; font-weight:700; font-size:1.25rem; background:#f3f4f6; padding:.35rem .8rem; border-radius:10px; }
+.sb-timer.low { background:#fee2e2; color:#b91c1c; }
+
+.sb-nav { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+.sb-dot { width:2.2rem; height:2.2rem; border-radius:8px; border:1px solid #d1d5db; background:#fff; cursor:pointer; font:inherit; font-size:.85rem; }
+.sb-dot.done { background:#dcfce7; border-color:#86efac; }
+.sb-dot.cur { outline:2px solid #2563eb; outline-offset:1px; font-weight:700; }
+
+.sb-card { background:#fff; border:1px solid #e5e7eb; border-radius:18px; padding:1.5rem; text-align:center; }
+.sb-count { color:#6b7280; font-size:.9rem; margin-bottom:1rem; }
+.sb-play { display:inline-flex; align-items:center; gap:.7rem; padding:1rem 1.8rem; border-radius:999px; border:0; background:#2563eb; color:#fff; font:inherit; font-size:1.15rem; font-weight:600; cursor:pointer; }
+.sb-play[disabled] { background:#9ca3af; cursor:not-allowed; }
+.sb-play.on { background:#1d4ed8; }
+.sb-plays { margin-top:.7rem; font-size:.9rem; color:#6b7280; }
+.sb-msg { margin-top:.7rem; font-size:.9rem; color:#b91c1c; }
+.sb-hint { margin:1.3rem auto 0; max-width:34rem; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px; padding:.8rem 1rem; text-align:left; font-size:.95rem; }
+.sb-hint b { display:block; font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; margin-bottom:.2rem; }
+.sb-input { margin-top:1.5rem; width:100%; max-width:26rem; padding:.9rem 1rem; font-size:1.4rem; text-align:center; letter-spacing:.06em; border:2px solid #d1d5db; border-radius:12px; box-sizing:border-box; }
+.sb-input:focus { outline:none; border-color:#2563eb; }
+
+.sb-foot { display:flex; justify-content:space-between; gap:.7rem; margin-top:1.2rem; flex-wrap:wrap; }
+.sb-btn { padding:.7rem 1.3rem; border-radius:10px; border:1px solid #d1d5db; background:#fff; font:inherit; cursor:pointer; }
+.sb-btn.primary { background:#111827; color:#fff; border-color:#111827; }
+.sb-btn[disabled] { opacity:.5; cursor:not-allowed; }
+.sb-confirm { margin-top:1rem; background:#fffbeb; border:1px solid #fde68a; border-radius:12px; padding:1rem; text-align:center; }
+.sb-confirm .sb-foot { justify-content:center; }

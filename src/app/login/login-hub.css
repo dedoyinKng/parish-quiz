@@ -1,0 +1,20 @@
+.hub-tabs { display:grid; grid-template-columns:1fr 1fr; background:#eef2f7; border-radius:12px; padding:.3rem; margin:1.2rem 0 1.4rem; }
+.hub-tab { padding:.6rem; border:0; background:transparent; border-radius:9px; cursor:pointer; font:inherit; font-weight:600; color:#64748b; }
+.hub-tab.on { background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+.hub-back { display:inline-block; font-size:.9rem; color:#64748b; text-decoration:none; }
+.hub-back:hover { color:#0f172a; }
+.hub-reg { margin-top:1.6rem; border:1px dashed #cbd5e1; border-radius:12px; padding:.9rem 1rem; background:#f8fafc; font-size:.92rem; color:#475569; line-height:1.5; }
+.hub-reg a { font-weight:700; color:#1e3a8a; }
+
+/* styles the candidate entry form needs inside this page */
+.hub .qfield { margin-bottom:1rem; }
+.hub .qlabel { display:block; font-weight:600; font-size:.9rem; margin-bottom:.35rem; }
+.hub .waitbox { display:grid; gap:.35rem; text-align:center; background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:1rem; margin:1rem 0; color:#1e3a8a; }
+.hub .countdown { font-size:2.2rem; font-weight:800; font-variant-numeric:tabular-nums; }
+
+/* Logo sizing on the sign-in hero */
+.login-hub img[src*="sekrenton-logo"],
+img[src*="sekrenton-logo"] {
+  height: 56px;
+  width: auto;
+}

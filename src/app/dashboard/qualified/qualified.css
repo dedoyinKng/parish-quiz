@@ -1,0 +1,17 @@
+.qgroup { background:#fff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:1.25rem; overflow:hidden; }
+.qgroup-head { padding:.9rem 1.1rem; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:center; }
+.qgroup-head h2 { margin:0; font-size:1.05rem; }
+.qtable { width:100%; border-collapse:collapse; font-size:.92rem; }
+.qtable th { text-align:left; font-weight:600; color:#6b7280; font-size:.78rem; text-transform:uppercase; letter-spacing:.03em; padding:.6rem 1.1rem; background:#f9fafb; }
+.qtable td { padding:.65rem 1.1rem; border-top:1px solid #f1f5f9; }
+.qtable tr.qwin td { background:#f0fdf4; }
+.qtable .num { text-align:right; font-variant-numeric:tabular-nums; }
+.qpill { display:inline-block; padding:.15rem .6rem; border-radius:999px; font-size:.78rem; font-weight:600; }
+.qpill.go { background:#dcfce7; color:#166534; }
+.qpill.tie { background:#fef3c7; color:#92400e; }
+.qpill.miss { background:#f3f4f6; color:#6b7280; }
+.qnote { padding:.7rem 1.1rem; font-size:.88rem; border-top:1px solid #f1f5f9; }
+.qnote.tie { background:#fffbeb; color:#92400e; }
+.qscroll { overflow-x:auto; }
+.qtie-form { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem; }
+.qtie-form form { margin:0; }

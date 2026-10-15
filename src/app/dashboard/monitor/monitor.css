@@ -1,0 +1,20 @@
+.mon-chips { display:flex; gap:.6rem; flex-wrap:wrap; margin:1rem 0 1.25rem; }
+.mon-chip { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:.6rem 1rem; min-width:7.5rem; }
+.mon-chip b { display:block; font-size:1.4rem; }
+.mon-chip span { font-size:.8rem; color:#6b7280; }
+.mon-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; margin-bottom:1.25rem; overflow:hidden; }
+.mon-card h2 { margin:0; padding:.9rem 1.1rem; font-size:1rem; border-bottom:1px solid #e5e7eb; }
+.mon-scroll { overflow-x:auto; }
+.mon-table { width:100%; border-collapse:collapse; font-size:.92rem; }
+.mon-table th { text-align:left; font-size:.76rem; text-transform:uppercase; letter-spacing:.03em; color:#6b7280; padding:.55rem 1.1rem; background:#f9fafb; }
+.mon-table td { padding:.65rem 1.1rem; border-top:1px solid #f1f5f9; vertical-align:middle; }
+.mon-pill { display:inline-block; padding:.12rem .6rem; border-radius:999px; font-size:.76rem; font-weight:600; }
+.mon-pill.write { background:#dbeafe; color:#1e40af; }
+.mon-pill.done { background:#dcfce7; color:#166534; }
+.mon-pill.wait { background:#f3f4f6; color:#6b7280; }
+.mon-acts { display:flex; gap:.4rem; flex-wrap:wrap; }
+.mon-acts form { margin:0; }
+.mon-btn { padding:.3rem .65rem; border:1px solid #d1d5db; background:#fff; border-radius:8px; font:inherit; font-size:.82rem; cursor:pointer; }
+.mon-btn.warn { border-color:#fca5a5; color:#b91c1c; }
+.mon-note { padding:.7rem 1.1rem; font-size:.85rem; color:#6b7280; border-top:1px solid #f1f5f9; }
+.mon-live { font-size:.8rem; color:#16a34a; }

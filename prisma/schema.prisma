@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum OrgType {
+  PROVINCE
+  ZONE
+  AREA
+  PARISH
+}
+
+enum Role {
+  SUPER_ADMIN
+  PROVINCE_COORDINATOR
+  ZONE_COORDINATOR
+  AREA_COORDINATOR
+  PARISH_TEACHER
+  QUESTION_UPLOADER
+}
+
+enum Competition {
+  ZEAL_QUIZ
+  BIBLE_QUIZ
+  SPELLING_BEE
+}
+
+enum Level {
+  L6_8
+  L9_12
+  L13_15
+  L16_19
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum CandidateStatus {
+  REGISTERED
+  VERIFIED
+  WITHDRAWN
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  MULTIPLE_SHORT_ANSWER
+  FILL_IN_GAP
+  TRUE_FALSE
+  MATCHING
+  SEQUENCE
+}
+
+model OrgUnit {
+  id         String      @id @default(cuid())
+  type       OrgType
+  name       String
+  code       String      @unique
+  parentId   String?
+  parent     OrgUnit?    @relation("OrgTree", fields: [parentId], references: [id])
+  children   OrgUnit[]   @relation("OrgTree")
+  hqParishId String?
+  hqParish   OrgUnit?    @relation("HqParish", fields: [hqParishId], references: [id])
+  hqOf       OrgUnit[]   @relation("HqParish")
+  users      User[]
+  candidates Candidate[]
+  exams      Exam[]
+  createdAt  DateTime    @default(now())
+
+  @@index([parentId])
+  @@index([type])
+}
+
+model User {
+  id                String      @id @default(cuid())
+  name              String
+  email             String      @unique
+  phone             String?
+  passwordHash      String
+  role              Role
+  orgUnitId         String?
+  orgUnit           OrgUnit?    @relation(fields: [orgUnitId], references: [id])
+  active            Boolean     @default(true)
+  createdAt         DateTime    @default(now())
+  candidatesCreated Candidate[]
+  questionsCreated  Question[]
+  examsCreated      Exam[]
+
+  @@index([orgUnitId])
+}
+
+model Season {
+  id                   String      @id @default(cuid())
+  name                 String      @unique
+  ageReferenceDate     DateTime    @db.Date
+  registrationDeadline DateTime?
+  createdAt            DateTime    @default(now())
+  candidates           Candidate[]
+  questions            Question[]
+  exams                Exam[]
+}
+
+model Candidate {
+  id              String          @id @default(cuid())
+  code            String          @unique
+  fullName        String
+  dateOfBirth     DateTime        @db.Date
+  gender          Gender
+  level           Level
+  guardianConsent Boolean         @default(false)
+  guardianPhone   String?
+  status          CandidateStatus @default(REGISTERED)
+  parishId        String
+  parish          OrgUnit         @relation(fields: [parishId], references: [id])
+  seasonId        String
+  season          Season          @relation(fields: [seasonId], references: [id])
+  createdById     String
+  createdBy       User            @relation(fields: [createdById], references: [id])
+  entries         Entry[]
+  attempts        Attempt[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([parishId, seasonId])
+  @@index([level])
+}
+
+model Entry {
+  id          String      @id @default(cuid())
+  candidateId String
+  candidate   Candidate   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  competition Competition
+
+  @@unique([candidateId, competition])
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  competition Competition
+  level       Level
+  type        QuestionType
+  prompt      String
+  content     Json
+  marks       Int          @default(1)
+  explanation String?
+  active      Boolean      @default(true)
+  createdById String
+  createdBy   User         @relation(fields: [createdById], references: [id])
+  seasonId    String?
+  season      Season?      @relation(fields: [seasonId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([competition, level])
+  @@index([createdById])
+  @@index([seasonId, competition, level])
+}
+
+// One competition = one quiz + category, held by one unit (a parish, area, zone or province).
+// The unit type is the stage. Candidates log in with their ID and the general PIN.
+model Exam {
+  id              String      @id @default(cuid())
+  seasonId        String
+  season          Season      @relation(fields: [seasonId], references: [id])
+  competition     Competition
+  level           Level
+  orgUnitId       String
+  orgUnit         OrgUnit     @relation(fields: [orgUnitId], references: [id])
+  startsAt        DateTime
+  durationMinutes Int
+  questionCount   Int?
+  pin             String
+  createdById     String
+  createdBy       User        @relation(fields: [createdById], references: [id])
+  attempts        Attempt[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([seasonId, competition, level, orgUnitId])
+  @@index([orgUnitId])
+  @@index([startsAt])
+}
+
+// One candidate taking one competition. The token is kept in a cookie on their device.
+model Attempt {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  examId      String
+  exam        Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  startedAt   DateTime  @default(now())
+  endsAt      DateTime
+  submittedAt DateTime?
+  questionIds Json
+  answers     Json      @default("{}")
+  score       Float?
+  maxScore    Int?
+
+  @@unique([examId, candidateId])
+  @@index([candidateId])
+}
+
+model QualifierOverride {
+  id          String   @id @default(cuid())
+  seasonId    String
+  orgUnitId   String
+  level       Level
+  candidateId String
+  decidedById String
+  createdAt   DateTime @default(now())
+
+  @@unique([seasonId, orgUnitId, level])
+}
+
+model SpellingWord {
+  id          String    @id @default(cuid())
+  seasonId    String
+  level       Level
+  word        String
+  sentence    String?
+  hint        String?
+  audioUrl    String?
+  audio       Bytes?
+  audioVoice  String?
+  audioMime   String?
+  audioSource String    @default("TTS")
+  audioAt     DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([seasonId, level, word])
+  @@index([seasonId, level])
+}
+
+model PlayThrottle {
+  key          String    @id
+  failures     Int       @default(0)
+  windowStart  DateTime  @default(now())
+  blockedUntil DateTime?
+}
