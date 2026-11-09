@@ -22,7 +22,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <header className="st-head">
         <div className="st-wrap st-head-in">
           <Link href="/" className="st-brand">
-            <img src="/sekrenton-logo.svg" alt="" className="st-logo" style={{ height: 40, width: "auto" }} />
+            <picture>
+              <img src="/sekrenton-logo.svg" alt="" className="st-logo" style={{ height: 40, width: "auto" }} />
+            </picture>
             {APP_NAME}
           </Link>
 
