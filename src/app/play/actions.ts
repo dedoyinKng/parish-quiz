@@ -97,7 +97,11 @@ export async function playLoginAction(
   const allowed: typeof found = [];
   let blocked: "NOT_WINNER" | "UNDECIDED" | null = null;
   for (const e of inChain) {
-    if (e.competition === "ZEAL_QUIZ" || e.competition === "BIBLE_QUIZ") {
+    if (
+      e.competition === "ZEAL_QUIZ" ||
+      e.competition === "BIBLE_QUIZ" ||
+      e.competition === "SPELLING_BEE"
+    ) {
       const g = await checkQualified({
         candidateId: candidate.id,
         parishId: candidate.parishId,
@@ -105,6 +109,7 @@ export async function playLoginAction(
         level: candidate.level,
         examUnitId: e.orgUnitId,
         parentOf,
+        track: e.competition === "SPELLING_BEE" ? "SPELLING_BEE" : "QUIZ",
       });
       if (!g.ok) {
         if (blocked !== "UNDECIDED") blocked = g.reason;

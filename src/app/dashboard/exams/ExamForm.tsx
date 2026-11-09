@@ -152,7 +152,7 @@ export default function ExamForm({
       <div className="qcard">
         <h2>Schedule</h2>
         <p className="sub">
-          Candidates cannot enter before the start time. All times are Lagos time.
+          Candidates cannot enter before the start time. All times are West Africa Time (WAT).
         </p>
         <div className="q3">
           <div className="qfield">

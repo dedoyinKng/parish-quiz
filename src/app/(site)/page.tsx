@@ -14,7 +14,7 @@ export default function HomePage() {
       <section className="st-hero">
         <div className="st-wrap st-hero-grid">
           <div>
-            <span className="st-eyebrow">Lagos Province 45</span>
+            <span className="st-eyebrow">Quiz competitions for church provinces</span>
             <h1>Quiz competitions from parish to province</h1>
             <p className="lead">
               Zeal Quiz, Bible Quiz and Spelling Bee for children and teens aged 6 to 19. Register

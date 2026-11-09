@@ -54,3 +54,26 @@ export async function submitNowAction(fd: FormData): Promise<void> {
   await finalizeAttempt(a.id);
   revalidatePath(`/dashboard/monitor/${a.examId}`);
 }
+
+
+/** Lets a blocked candidate try again straight away. */
+export async function clearLockAction(fd: FormData): Promise<void> {
+  const user = await requireUser();
+  if (!canScheduleExams(user.role)) return;
+  const exam = await db.exam.findUnique({
+    where: { id: String(fd.get("examId") ?? "") },
+    select: { id: true, orgUnitId: true },
+  });
+  if (!exam) return;
+  const units = await getVisibleUnits(user);
+  if (!units.some((u) => u.id === exam.orgUnitId)) return;
+  const cand = await db.candidate.findUnique({
+    where: { id: String(fd.get("candidateId") ?? "") },
+    select: { code: true },
+  });
+  if (!cand) return;
+  await db.playThrottle.deleteMany({
+    where: { key: { contains: cand.code, mode: "insensitive" } },
+  });
+  revalidatePath("/dashboard/monitor/" + exam.id);
+}

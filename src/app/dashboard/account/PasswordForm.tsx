@@ -1,5 +1,6 @@
 "use client";
 
+import PasswordInput from "@/components/PasswordInput";
 import { useActionState } from "react";
 import { changePasswordAction } from "./actions";
 
@@ -15,10 +16,9 @@ export default function PasswordForm() {
         <label htmlFor="pw-current" className="label">
           Current password
         </label>
-        <input
+        <PasswordInput
           id="pw-current"
           name="current"
-          type="password"
           autoComplete="current-password"
           required
           className="field"
@@ -28,10 +28,9 @@ export default function PasswordForm() {
         <label htmlFor="pw-next" className="label">
           New password
         </label>
-        <input
+        <PasswordInput
           id="pw-next"
           name="next"
-          type="password"
           autoComplete="new-password"
           required
           className="field"
@@ -41,10 +40,9 @@ export default function PasswordForm() {
         <label htmlFor="pw-confirm" className="label">
           Confirm new password
         </label>
-        <input
+        <PasswordInput
           id="pw-confirm"
           name="confirm"
-          type="password"
           autoComplete="new-password"
           required
           className="field"

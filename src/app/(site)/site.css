@@ -114,3 +114,14 @@ footer img.st-logo,
 .st-footer .st-logo {
   height: 48px !important;
 }
+
+/* Logo sizing (matches by file name) */
+img[src*="sekrenton-logo"] {
+  height: 40px !important;
+  width: auto !important;
+  max-width: none !important;
+  display: block;
+}
+footer img[src*="sekrenton-logo"] {
+  height: 56px !important;
+}

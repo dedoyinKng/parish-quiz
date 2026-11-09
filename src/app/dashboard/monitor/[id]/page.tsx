@@ -6,7 +6,7 @@ import { COMPETITION_LABEL, LEVEL_LABEL } from "@/lib/levels";
 import { STAGE_LABEL, canScheduleExams, formatLagos } from "@/lib/exams";
 import { getUnitResult } from "@/lib/qualify";
 import { finalizeAttempt } from "@/lib/quiz-server";
-import { extendAction, submitNowAction } from "../actions";
+import { extendAction, submitNowAction, clearLockAction } from "../actions";
 import AutoRefresh from "../AutoRefresh";
 import MonitorButton from "../MonitorButton";
 import "../monitor.css";
@@ -88,21 +88,22 @@ export default async function MonitorPage({
       select,
       orderBy: { fullName: "asc" },
     });
-  } else if (exam.competition !== "SPELLING_BEE") {
+  } else {
     // higher stages: the winners of the stage below
     const children = kids.get(exam.orgUnitId) ?? [];
     const results = await Promise.all(
-      children.map((c) => getUnitResult(exam.seasonId, c, exam.level))
+      children.map((c) =>
+        getUnitResult(
+          exam.seasonId,
+          c,
+          exam.level,
+          exam.competition === "SPELLING_BEE" ? "SPELLING_BEE" : "QUIZ"
+        )
+      )
     );
     const winnerIds = results.map((r) => r.winner?.candidateId).filter((x): x is string => !!x);
     expected = await db.candidate.findMany({
       where: { id: { in: winnerIds } },
-      select,
-      orderBy: { fullName: "asc" },
-    });
-  } else {
-    expected = await db.candidate.findMany({
-      where: { ...base, parishId: { in: descendants(exam.orgUnitId) } },
       select,
       orderBy: { fullName: "asc" },
     });
@@ -112,6 +113,13 @@ export default async function MonitorPage({
   const notStarted = expected.filter((c) => !started.has(c.id));
   const writing = attempts.filter((a) => !a.submittedAt);
   const submitted = attempts.filter((a) => a.submittedAt);
+
+  const blocks = await db.playThrottle.findMany({
+    where: { blockedUntil: { gt: now } },
+  });
+  const locked = expected.filter((c) =>
+    blocks.some((b) => b.key.toLowerCase().includes(c.code.toLowerCase()))
+  );
 
   return (
     <div className="qwide">
@@ -150,6 +158,37 @@ export default async function MonitorPage({
           <span>Submitted</span>
         </div>
       </div>
+
+      {locked.length > 0 && (
+        <div className="mon-card">
+          <h2>Locked out ({locked.length})</h2>
+          <div className="mon-note">
+            These candidates entered a wrong PIN too many times. They can try again after a few
+            minutes, or you can clear the lock now.
+          </div>
+          <div className="mon-scroll">
+            <table className="mon-table">
+              <tbody>
+                {locked.map((c) => (
+                  <tr key={c.id}>
+                    <td>
+                      <strong>{c.fullName}</strong>
+                    </td>
+                    <td className="muted">{c.code}</td>
+                    <td>
+                      <form action={clearLockAction}>
+                        <input type="hidden" name="examId" value={exam.id} />
+                        <input type="hidden" name="candidateId" value={c.id} />
+                        <MonitorButton label="Clear lock" />
+                      </form>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div className="mon-card">
         <h2>Candidates who have started ({attempts.length})</h2>

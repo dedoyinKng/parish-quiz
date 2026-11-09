@@ -22,7 +22,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <header className="st-head">
         <div className="st-wrap st-head-in">
           <Link href="/" className="st-brand">
-            <img src="/sekrenton-logo.svg" alt="" className="st-logo" />
+            <img src="/sekrenton-logo.svg" alt="" className="st-logo" style={{ height: 40, width: "auto" }} />
             {APP_NAME}
           </Link>
 
@@ -80,7 +80,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <div className="st-foot-grid">
             <div>
               <div className="st-brand" style={{ color: "#fff" }}>
-                <img src="/sekrenton-logo.svg" alt="" className="st-logo" />
+                <img src="/sekrenton-logo.svg" alt="" className="st-logo" style={{ height: 56, width: "auto", filter: "brightness(0) invert(1)" }} />
                 {APP_NAME}
               </div>
               <p style={{ maxWidth: "22rem", lineHeight: 1.6, fontSize: ".92rem" }}>

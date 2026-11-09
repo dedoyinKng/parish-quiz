@@ -1,5 +1,6 @@
 "use client";
 
+import PasswordInput from "@/components/PasswordInput";
 import { useActionState, useState } from "react";
 import { registerParishAction } from "./actions";
 
@@ -190,10 +191,9 @@ export default function RegisterForm({ units }: { units: Unit[] }) {
         <label htmlFor="password" className="label">
           Password (at least 8 characters)
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           required
           minLength={8}
           autoComplete="new-password"

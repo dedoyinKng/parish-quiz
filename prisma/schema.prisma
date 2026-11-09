@@ -216,8 +216,9 @@ model QualifierOverride {
   candidateId String
   decidedById String
   createdAt   DateTime @default(now())
+  track String @default("QUIZ")
 
-  @@unique([seasonId, orgUnitId, level])
+  @@unique([seasonId, orgUnitId, level, track])
 }
 
 model SpellingWord {

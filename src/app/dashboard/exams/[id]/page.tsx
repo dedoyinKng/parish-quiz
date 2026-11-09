@@ -88,7 +88,7 @@ export default async function ExamDetailPage({
             </div>
           </div>
           <div>
-            <div className="fact-label">Starts (Lagos time)</div>
+            <div className="fact-label">Starts (West Africa Time)</div>
             <div className="fact-value">{formatLagos(exam.startsAt)}</div>
           </div>
           <div>

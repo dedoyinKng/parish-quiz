@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 
+export type Track = "QUIZ" | "SPELLING_BEE";
+
 export type Combined = {
   candidateId: string;
   zeal: number | null;
@@ -7,42 +9,50 @@ export type Combined = {
   total: number;
   maxTotal: number;
   seconds: number;
-  /** Submitted both Zeal Quiz and Bible Quiz. */
+  /** QUIZ: submitted both Zeal and Bible. SPELLING_BEE: always true. */
   complete: boolean;
 };
 
 export type UnitResult = {
   ranked: Combined[];
   winner: Combined | null;
-  /** Equal for 1st on total and time and not yet decided. */
   tied: Combined[];
-  /** The winner was chosen by a coordinator after a tie. */
   decided: boolean;
   hasZeal: boolean;
   hasBible: boolean;
+  hasSpelling: boolean;
 };
 
 /**
- * Combined Zeal + Bible ranking for one category at one unit.
- * Only candidates with BOTH quizzes submitted are eligible.
+ * Ranking for one category at one unit.
+ * QUIZ: Zeal + Bible added together (both required).
+ * SPELLING_BEE: the Spelling Bee score on its own.
+ * Highest score first; faster time breaks a tie; a coordinator decides a full tie.
  */
 export async function getUnitResult(
   seasonId: string,
   orgUnitId: string,
-  level: string
+  level: string,
+  track: Track = "QUIZ"
 ): Promise<UnitResult> {
+  const competitions =
+    track === "QUIZ" ? ["ZEAL_QUIZ", "BIBLE_QUIZ"] : ["SPELLING_BEE"];
+
   const exams = await db.exam.findMany({
     where: {
       seasonId,
       orgUnitId,
       level: level as never,
-      competition: { in: ["ZEAL_QUIZ", "BIBLE_QUIZ"] as never[] },
+      competition: { in: competitions as never[] },
     },
     select: { id: true, competition: true },
   });
 
   const zealId = exams.find((e) => String(e.competition) === "ZEAL_QUIZ")?.id;
   const bibleId = exams.find((e) => String(e.competition) === "BIBLE_QUIZ")?.id;
+  const spellIds = exams
+    .filter((e) => String(e.competition) === "SPELLING_BEE")
+    .map((e) => e.id);
 
   const attempts = exams.length
     ? await db.attempt.findMany({
@@ -89,10 +99,9 @@ export async function getUnitResult(
 
   const all = [...map.values()].map((c) => ({
     ...c,
-    complete: c.zeal !== null && c.bible !== null,
+    complete: track === "QUIZ" ? c.zeal !== null && c.bible !== null : true,
   }));
 
-  // Eligible (both quizzes) first, then by total desc, then faster time.
   const ranked = all.sort(
     (x, y) =>
       Number(y.complete) - Number(x.complete) ||
@@ -117,7 +126,14 @@ export async function getUnitResult(
     winner = first;
   } else if (tiedList.length > 1) {
     const o = await db.qualifierOverride.findUnique({
-      where: { seasonId_orgUnitId_level: { seasonId, orgUnitId, level: level as never } },
+      where: {
+        seasonId_orgUnitId_level_track: {
+          seasonId,
+          orgUnitId,
+          level: level as never,
+          track,
+        },
+      },
     });
     const chosen = o
       ? tiedList.find((c) => c.candidateId === o.candidateId)
@@ -137,16 +153,19 @@ export async function getUnitResult(
     decided,
     hasZeal: !!zealId,
     hasBible: !!bibleId,
+    hasSpelling: spellIds.length > 0,
   };
 }
 
-export type GateResult = { ok: true } | { ok: false; reason: "NOT_WINNER" | "UNDECIDED" };
+export type GateResult =
+  | { ok: true }
+  | { ok: false; reason: "NOT_WINNER" | "UNDECIDED" };
 
 /**
- * Can this candidate enter a quiz held at examUnitId?
+ * Can this candidate enter a competition held at examUnitId?
  * - Their own parish: always yes.
- * - Any higher unit: they must have won (combined Zeal + Bible)
- *   at the unit directly below it on their path up.
+ * - Any higher unit: they must have won, on the same track, at the unit
+ *   directly below it on their path up.
  */
 export async function checkQualified(opts: {
   candidateId: string;
@@ -155,8 +174,10 @@ export async function checkQualified(opts: {
   level: string;
   examUnitId: string;
   parentOf: Map<string, string | null>;
+  track?: Track;
 }): Promise<GateResult> {
   const { candidateId, parishId, seasonId, level, examUnitId, parentOf } = opts;
+  const track = opts.track ?? "QUIZ";
   if (parishId === examUnitId) return { ok: true };
 
   let child: string = parishId;
@@ -169,7 +190,7 @@ export async function checkQualified(opts: {
     child = up;
   }
 
-  const res = await getUnitResult(seasonId, child, level);
+  const res = await getUnitResult(seasonId, child, level, track);
   if (res.winner?.candidateId === candidateId) return { ok: true };
   if (res.tied.some((t) => t.candidateId === candidateId))
     return { ok: false, reason: "UNDECIDED" };

@@ -1,5 +1,6 @@
 "use client";
 
+import PasswordInput from "@/components/PasswordInput";
 import type { CSSProperties } from "react";
 import { useActionState, useState } from "react";
 import Link from "next/link";
@@ -103,10 +104,9 @@ export default function LoginPage() {
                   <label htmlFor="password" className="label">
                     Password
                   </label>
-                  <input
+                  <PasswordInput
                     id="password"
                     name="password"
-                    type="password"
                     autoComplete="current-password"
                     required
                     className="field"
